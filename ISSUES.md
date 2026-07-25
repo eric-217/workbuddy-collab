@@ -8,32 +8,27 @@
 
 ## 当前主题（可动态扩展）
 
-| 文件 | 主题 | 说明 |
-|------|------|------|
-| [ISSUES_财富管理.md](./ISSUES_财富管理.md) | 客户资产规划 | 陈女士/孙小姐等客户报表 |
-| [ISSUES_固收分析.md](./ISSUES_固收分析.md) | 固收产品 & 文章 | 产品监控、公众号写作 |
-| [ISSUES_境外资产.md](./ISSUES_境外资产.md) | 港险 / CRS | 跨境配置与合规 |
-| [ISSUES_教育理论.md](./ISSUES_教育理论.md) | 教育讨论 | 教育方法论探讨 |
+| 文件 | 主题 | MEMORY_SYNC | 协作规则 |
+|------|------|------------|---------|
+| [ISSUES_财富管理.md](./ISSUES_财富管理.md) | 客户资产规划 | [MEMORY_SYNC_财富管理.md](./MEMORY_SYNC_财富管理.md) | [协作规则_财富管理.md](./协作规则_财富管理.md) |
+| [ISSUES_固收分析.md](./ISSUES_固收分析.md) | 固收产品 & 文章 | [MEMORY_SYNC_固收分析.md](./MEMORY_SYNC_固收分析.md) | — |
+| [ISSUES_境外资产.md](./ISSUES_境外资产.md) | 港险 / CRS | [MEMORY_SYNC_境外资产.md](./MEMORY_SYNC_境外资产.md) | — |
+| [ISSUES_教育理论.md](./ISSUES_教育理论.md) | 教育讨论 | [MEMORY_SYNC_教育理论.md](./MEMORY_SYNC_教育理论.md) | [协作规则_教育理论.md](./协作规则_教育理论.md) |
 
-> 💡 **需要新主题？** 在任意对话中说"给这个对话加一个主题"即可自动创建。
+> 💡 **需要新主题？** 在任意对话中说"新建主题"或"把这个对话注册为主题"即可自动创建。
 
 ---
 
 ## 怎么用
 
-### 📱 手机添加想法（随时随地）
-> 华为/安卓手机无需安装 App，直接用浏览器即可。
+### 📱 手机添加想法
+1. 手机浏览器打开：`github.com/eric-217/workbuddy-collab`
+2. 点进对应主题的 `ISSUES_XXX.md`
+3. 点 ✏️ 编辑 → 添加内容 → Commit
 
-1. 手机浏览器打开：`github.com/eric-217/wealth-eric`
-2. 点进对应主题的 `ISSUES_XXX.md`（如 `ISSUES_财富管理.md`）
-3. 点右上角 ✏️ 编辑图标 → 在「待办」表格加一行
-4. 滑到底部点绿色「Commit changes」按钮 → 提交
-
-💡 **技巧**：把仓库地址添加到浏览器书签，一键直达。
-
-### 💻 下次打开 WorkBuddy
-AI 会自动 `git pull` 最新版本 → 读取对应主题文件 → 告诉你有哪些新待办
+### 💻 AI 对话启动
+AI 会自动 `git pull` → 读取 MEMORY_SYNC、ISSUES、协作规则 → 汇报待办
 
 ---
 
-*文件自动维护于：D:\workbuddy\财富管理\客户财富管理规划报表\*
+*文件位于：D:\workbuddy\github\*
