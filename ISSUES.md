@@ -8,12 +8,12 @@
 
 ## 当前主题（可动态扩展）
 
-| 文件 | 主题 | MEMORY_SYNC | 协作规则 |
-|------|------|------------|---------|
-| [ISSUES_财富管理.md](./ISSUES_财富管理.md) | 客户资产规划 | [MEMORY_SYNC_财富管理.md](./MEMORY_SYNC_财富管理.md) | [协作规则_财富管理.md](./协作规则_财富管理.md) |
-| [ISSUES_固收分析.md](./ISSUES_固收分析.md) | 固收产品 & 文章 | [MEMORY_SYNC_固收分析.md](./MEMORY_SYNC_固收分析.md) | — |
-| [ISSUES_境外资产.md](./ISSUES_境外资产.md) | 港险 / CRS | [MEMORY_SYNC_境外资产.md](./MEMORY_SYNC_境外资产.md) | — |
-| [ISSUES_教育理论.md](./ISSUES_教育理论.md) | 教育讨论 | [MEMORY_SYNC_教育理论.md](./MEMORY_SYNC_教育理论.md) | [协作规则_教育理论.md](./协作规则_教育理论.md) |
+| 文件 | 主题 | MEMORY_SYNC | LOG | 协作规则 |
+|------|------|------------|-----|---------|
+| [ISSUES_财富管理.md](./ISSUES_财富管理.md) | 客户资产规划 | [MEMORY_SYNC_财富管理.md](./MEMORY_SYNC_财富管理.md) | — | [协作规则_财富管理.md](./协作规则_财富管理.md) |
+| [ISSUES_固收分析.md](./ISSUES_固收分析.md) | 固收产品 & 文章 | [MEMORY_SYNC_固收分析.md](./MEMORY_SYNC_固收分析.md) | [LOG_固收分析.md](./LOG_固收分析.md) | — |
+| [ISSUES_境外资产.md](./ISSUES_境外资产.md) | 港险 / CRS | [MEMORY_SYNC_境外资产.md](./MEMORY_SYNC_境外资产.md) | — | — |
+| [ISSUES_教育理论.md](./ISSUES_教育理论.md) | 教育讨论 | [MEMORY_SYNC_教育理论.md](./MEMORY_SYNC_教育理论.md) | [LOG_教育理论.md](./LOG_教育理论.md) | [协作规则_教育理论.md](./协作规则_教育理论.md) |
 
 > 💡 **需要新主题？** 在任意对话中说"新建主题"或"把这个对话注册为主题"即可自动创建。
 

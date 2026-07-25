@@ -80,14 +80,22 @@
 2. 读取 `MEMORY_SYNC.md`（本文件，系统级规则备份，可选读）
 3. 读取对应主题的 `MEMORY_SYNC_主题名.md`（项目级规则，**必读**）
 4. 读取对应主题的 `ISSUES_主题名.md`，汇报待办事项
-5. 检查 `协作规则.md` 索引 → 有匹配的协作规则 → 一并读取
+5. 如有对应主题的 `LOG_主题名.md`，读取历史推理上下文（如文件较大，AI 自行判断范围）
+6. 检查 `协作规则.md` 索引 → 有匹配的协作规则 → 一并读取
 
 ### 写回规则（⭐ 自动更新）
 完成实质工作后：
 1. **先 git pull**：确保基于仓库最新版本编辑，防止本地记忆压缩导致的内容丢失
 2. 如果本对话主题的项目规则有变更 → 更新 `MEMORY_SYNC_主题名.md`
 3. 如果用户的自定义指令有变更 → 同步更新 `MEMORY_SYNC.md`（本文件）+ `~\.workbuddy\MEMORY.md`（本地源）
-4. `git add -A && git commit -m "描述" && git push`
+4. 如果本主题有 LOG 文件 → 将关键推理链追加到 `LOG_主题名.md`
+5. `git add -A && git commit -m "描述" && git push`
+
+### LOG 文件说明（⭐ 2026-07-25 新增）
+- LOG 与 MEMORY_SYNC 互补：MEMORY_SYNC 存**规则/结论**，LOG 存**推理过程/决策上下文**
+- 目前仅两个主题启用：固收分析（`LOG_固收分析.md`）、教育理论（`LOG_教育理论.md`）
+- 写入：追加到底部，不覆盖历史
+- 维护：超过 50KB 时提醒用户精简/归档
 
 ### 关于本地记忆压缩
 - WorkBuddy 可能压缩本地 `MEMORY.md`（精简/截断），但**不会影响仓库中的 MEMORY_SYNC 文件**
@@ -97,12 +105,12 @@
 
 ### 主题文件映射
 
-| 主题 | MEMORY_SYNC | ISSUES | 协作规则 |
-|------|------------|--------|---------|
-| 财富管理 | MEMORY_SYNC_财富管理.md | ISSUES_财富管理.md | 协作规则_财富管理.md |
-| 固收分析 | MEMORY_SYNC_固收分析.md | ISSUES_固收分析.md | — |
-| 境外资产 | MEMORY_SYNC_境外资产.md | ISSUES_境外资产.md | — |
-| 教育理论 | MEMORY_SYNC_教育理论.md | ISSUES_教育理论.md | 协作规则_教育理论.md |
+| 主题 | MEMORY_SYNC | ISSUES | LOG | 协作规则 |
+|------|------------|--------|-----|---------|
+| 财富管理 | MEMORY_SYNC_财富管理.md | ISSUES_财富管理.md | — | 协作规则_财富管理.md |
+| 固收分析 | MEMORY_SYNC_固收分析.md | ISSUES_固收分析.md | LOG_固收分析.md | — |
+| 境外资产 | MEMORY_SYNC_境外资产.md | ISSUES_境外资产.md | — | — |
+| 教育理论 | MEMORY_SYNC_教育理论.md | ISSUES_教育理论.md | LOG_教育理论.md | 协作规则_教育理论.md |
 
 ### 动态添加主题
 用户说"新建主题"/"注册主题"等 → AI 自动：
