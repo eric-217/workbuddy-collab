@@ -84,9 +84,16 @@
 
 ### 写回规则（⭐ 自动更新）
 完成实质工作后：
-1. 如果本对话主题的项目规则有变更 → 更新 `MEMORY_SYNC_主题名.md`
-2. 如果用户的自定义指令有变更 → 更新 `MEMORY_SYNC.md`（本文件）
-3. `git add -A && git commit -m "描述" && git push`
+1. **先 git pull**：确保基于仓库最新版本编辑，防止本地记忆压缩导致的内容丢失
+2. 如果本对话主题的项目规则有变更 → 更新 `MEMORY_SYNC_主题名.md`
+3. 如果用户的自定义指令有变更 → 同步更新 `MEMORY_SYNC.md`（本文件）+ `~\.workbuddy\MEMORY.md`（本地源）
+4. `git add -A && git commit -m "描述" && git push`
+
+### 关于本地记忆压缩
+- WorkBuddy 可能压缩本地 `MEMORY.md`（精简/截断），但**不会影响仓库中的 MEMORY_SYNC 文件**
+- 保护机制：修改 MEMORY_SYNC 前必须先 git pull，确保基于仓库完整版本
+- 本地 MEMORY.md 被压缩后，下次对话可 git pull 仓库的 MEMORY_SYNC 恢复项目级规则
+- **不需要合并**：MEMORY_SYNC（项目通用规则）和本地 MEMORY.md（含私密数据）是不同文件，不产生冲突
 
 ### 主题文件映射
 
