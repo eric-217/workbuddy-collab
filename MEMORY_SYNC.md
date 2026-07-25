@@ -2,7 +2,7 @@
 
 > **用途**：当本地 `.workbuddy/memory/MEMORY.md` 被压缩导致内容丢失时，从此文件恢复。
 > **同步方式**：AI 在每次更新本地 MEMORY.md 后，同步更新本文件并 git push。
-> **最后同步**：2026-07-25
+> **最后同步**：2026-07-25（建仓完成，协作中枢仓库：github.com/eric-217/workbuddy-collab）
 
 ---
 
