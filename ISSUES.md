@@ -17,6 +17,7 @@
 | [ISSUES_贾维斯计划.md](./ISSUES_贾维斯计划.md) | 内在资源活地图 | [MEMORY_SYNC_贾维斯计划.md](./MEMORY_SYNC_贾维斯计划.md) | [LOG_贾维斯计划.md](./LOG_贾维斯计划.md) | — |
 | [ISSUES_国内保障.md](./ISSUES_国内保障.md) | 社保/医保/社会福利 | [MEMORY_SYNC_国内保障.md](./MEMORY_SYNC_国内保障.md) | — | — |
 | [ISSUES_一人公司.md](./ISSUES_一人公司.md) | 一人公司教育商业化 | [MEMORY_SYNC_一人公司.md](./MEMORY_SYNC_一人公司.md) | [LOG_一人公司.md](./LOG_一人公司.md) | — |
+| [ISSUES_性教育.md](./ISSUES_性教育.md) | 儿童性教育 | [MEMORY_SYNC_性教育.md](./MEMORY_SYNC_性教育.md) | [LOG_性教育.md](./LOG_性教育.md) | — |
 
 > 💡 **需要新主题？** 在任意对话中说"新建主题"或"把这个对话注册为主题"即可自动创建。
 
