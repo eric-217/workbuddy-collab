@@ -15,6 +15,7 @@
 | [ISSUES_境外资产.md](./ISSUES_境外资产.md) | 港险 / CRS | [MEMORY_SYNC_境外资产.md](./MEMORY_SYNC_境外资产.md) | — | — |
 | [ISSUES_教育理论.md](./ISSUES_教育理论.md) | 教育讨论 | [MEMORY_SYNC_教育理论.md](./MEMORY_SYNC_教育理论.md) | [LOG_教育理论.md](./LOG_教育理论.md) | [协作规则_教育理论.md](./协作规则_教育理论.md) |
 | [ISSUES_贾维斯计划.md](./ISSUES_贾维斯计划.md) | 内在资源活地图 | [MEMORY_SYNC_贾维斯计划.md](./MEMORY_SYNC_贾维斯计划.md) | [LOG_贾维斯计划.md](./LOG_贾维斯计划.md) | — |
+| [ISSUES_国内保障.md](./ISSUES_国内保障.md) | 社保/医保/社会福利 | [MEMORY_SYNC_国内保障.md](./MEMORY_SYNC_国内保障.md) | — | — |
 
 > 💡 **需要新主题？** 在任意对话中说"新建主题"或"把这个对话注册为主题"即可自动创建。
 

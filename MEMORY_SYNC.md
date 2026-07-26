@@ -148,6 +148,7 @@
 | 境外资产 | MEMORY_SYNC_境外资产.md | ISSUES_境外资产.md | — | — |
 | 教育理论 | MEMORY_SYNC_教育理论.md | ISSUES_教育理论.md | LOG_教育理论.md | 协作规则_教育理论.md |
 | 贾维斯计划 | MEMORY_SYNC_贾维斯计划.md | ISSUES_贾维斯计划.md | LOG_贾维斯计划.md | — |
+| 国内保障 | MEMORY_SYNC_国内保障.md | ISSUES_国内保障.md | — | — |
 
 ### 动态添加主题
 用户说"新建主题"/"注册主题"等 → AI 自动：
