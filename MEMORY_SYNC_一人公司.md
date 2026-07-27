@@ -7,6 +7,31 @@
 
 ---
 
+## Skill 加载指令
+
+> 对话启动时加载核心 skill；场景触发时按需加载辅助 skill。调用方式：`Skill: skill-name`
+
+### 🔴 启动加载（核心）
+在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `sales-playbook` — 基于价值的定价与销售剧本（分层报价/通话前简报/通话后分析）
+- `content-factory` — 五智能体内容生产管线（Writer/Remixer/Editor/Scriptwriter/Headline Machine）
+- `khazix-writer` — 卡兹克风格公众号长文写作
+- `market-researcher` — 市场调研（TAM/SAM/SOM/竞争分析/消费者洞察）
+
+### 🟡 场景触发（辅助）
+- 跨平台内容轻量适配 → `content-repurposer`
+- 公众号排版 → `wechat-article-formatter`
+- 公众号发布全流程 → `wechat-article-pro`
+- 客户提案/课程PPT → `deck-generator` 或 `pptx-generator`
+- 发送邮件给客户/合作方 → `email-sender`
+- 小红书内容运营 → `小红书助手`
+- 营销内容去AI味 → `humanizer`
+- 客户调研/报名表单 → `jinshuju`
+- 个人品牌网站/着陆页 → `frontend-dev`
+- 教育理论书籍出版 → `fbs-bookwriter`
+- 整理商业笔记/咨询记录 → `note-organizer`
+
+---
 ## 项目定位
 
 **一人公司 = 将家庭教育内容资产进行商业化运作的综合计划。**

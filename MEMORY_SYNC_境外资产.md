@@ -6,6 +6,21 @@
 
 ---
 
+## Skill 加载指令
+
+> 对话启动时加载核心 skill；场景触发时按需加载辅助 skill。调用方式：`Skill: skill-name`
+
+### 🔴 启动加载（核心）
+在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `neodata-financial-search` — 港股/美股/外汇/大宗商品数据查询
+- `macro-monitor` — 美联储政策、全球宏观数据监控
+
+### 🟡 场景触发（辅助）
+- 境外市场机会分析、TAM/SAM计算 → `market-researcher`
+- 跨境信息多引擎交叉验证 → `multi-search-engine`
+- 评估跨境投资分析框架 → `content-evaluator`
+
+---
 ## 港险配置规则
 
 ### 产品分析框架

@@ -30,6 +30,25 @@
 
 ---
 
+## Skill 加载指令
+
+> 对话启动时加载核心 skill；场景触发时按需加载辅助 skill。调用方式：`Skill: skill-name`
+
+### 🔴 启动加载（核心）
+在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `content-evaluator` — 11维度评价框架，评估财商教育框架和内容时使用
+- `khazix-writer` — 卡兹克风格公众号长文写作（4000-8000字）
+
+### 🟡 场景触发（辅助）
+- 财商教育文章排版发公众号 → `wechat-article-formatter`
+- 公众号发布全流程（需AI配图）→ `wechat-article-pro`
+- 一份素材→多平台内容（公众号+视频号+小红书）→ `content-factory`
+- 跨平台内容轻量适配 → `content-repurposer`
+- 教育内容去AI味 → `humanizer`
+- 整理财商教育精读笔记 → `note-organizer`
+- 财商教育课程PPT → `deck-generator` 或 `pptx-generator`
+
+---
 ## 财商教育方法论与框架
 
 ### 核心总框架：「三观五者」

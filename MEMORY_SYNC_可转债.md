@@ -24,6 +24,22 @@
 | westock-data | A股/港股结构化行情数据（个券报价、K线、财报） |
 | wb-finance-skill | 金融分析场景总入口 |
 
+## Skill 加载指令
+
+> 对话启动时加载核心 skill；场景触发时按需加载辅助 skill。调用方式：`Skill: skill-name`
+
+### 🔴 启动加载（核心）
+在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `neodata-financial-search` — 可转债行情、正股数据、转股溢价率查询
+
+### 🟡 场景触发（辅助）
+- 可转债公告/公司信息交叉验证 → `multi-search-engine`
+- 总结券商可转债研报 → `内容总结`
+- 转录可转债相关会议/路演录音 → `openai-whisper`
+- A股/港股结构化行情数据（个券报价、K线、财报）→ 内置 `westock-data` skill
+- 金融分析场景总入口 → 内置 `wb-finance-skill` skill
+
+---
 ## 协作约定
 
 <!-- 此处记录与本主题相关的协作约定 -->

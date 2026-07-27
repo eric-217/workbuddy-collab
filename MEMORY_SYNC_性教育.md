@@ -9,6 +9,21 @@
 
 ---
 
+## Skill 加载指令
+
+> 对话启动时加载核心 skill；场景触发时按需加载辅助 skill。调用方式：`Skill: skill-name`
+
+### 🔴 启动加载（核心）
+在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `content-evaluator` — 11维度评价框架，评估性教育理论观点时使用
+- `khazix-writer` — 卡兹克风格公众号长文写作
+
+### 🟡 场景触发（辅助）
+- 敏感话题文字去AI味 → `humanizer`
+- 公众号排版 → `wechat-article-formatter`
+- 多平台内容适配 → `content-factory`
+
+---
 ## 核心理念
 
 ### 性教育优先级框架（2026-07-26 确立）

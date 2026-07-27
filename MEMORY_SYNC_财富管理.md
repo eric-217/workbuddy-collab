@@ -7,6 +7,25 @@
 
 ---
 
+## Skill 加载指令
+
+> 对话启动时加载核心 skill；场景触发时按需加载辅助 skill。调用方式：`Skill: skill-name`
+
+### 🔴 启动加载（核心）
+在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `wealth-management-init` — 新客户工作区初始化（8大角色+14条规则+模板复制）
+- `固收产品收益计算` — 客户固收配置的现金流计算
+- `pe-event-tracker` — 私募股权底层项目事件跟踪（IPO/收购/退市）
+- `neodata-financial-search` — 各类金融数据支撑客户决策
+
+### 🟡 场景触发（辅助）
+- 宏观政策对客户配置影响分析 → `macro-monitor`
+- 客户报表/资产清单生成 → 调用内置 `xlsx` skill
+- 发送报告给客户 → `email-sender`
+- 定价策略/客户沟通准备 → `sales-playbook`
+- 阅读/编辑PDF合同、合并PDF → 调用内置 `pdf` / `pdfkit-py` skill
+
+---
 ## 核心原则
 
 ### 第一原则：用增值支付支出，不伤本金

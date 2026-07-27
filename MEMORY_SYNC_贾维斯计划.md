@@ -6,6 +6,24 @@
 
 ---
 
+## Skill 加载指令
+
+> 对话启动时加载核心 skill；场景触发时按需加载辅助 skill。调用方式：`Skill: skill-name`
+
+### 🔴 启动加载（核心）
+在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `wechat-miniprogram` — 微信小程序开发（WXML/WXSS/组件/API/云开发）
+- `tdesign-miniprogram` — TDesign 小程序UI组件库（60+组件），与 `wechat-miniprogram` 配合使用
+- `frontend-dev` — 全栈前端开发（React/Next.js + Tailwind + 动画 + AI媒体生成）
+- 加载内置 `cloudbase` skill — 云开发后端（云函数/数据库/存储）
+
+### 🟡 场景触发（辅助）
+- 产品市场验证/竞品分析 → `market-researcher`
+- 产品宣讲/路演PPT → `deck-generator` 或 `pptx-generator`
+- 评估产品方案 → `content-evaluator`
+- 测试产品Web端 → 内置 `agent-browser` 或 `playwright-cli` skill
+
+---
 ## 一、产品定位
 
 | 维度 | 定义 |
