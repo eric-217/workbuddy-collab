@@ -14,11 +14,10 @@
 
 ### 🔴 启动加载（核心）
 在对话启动时一次性调用 Skill 工具加载以下 skill：
-- `固收产品收益计算` — 固收产品现金流与收益计算（利息规则、付息方式、HTML报表）
 - `neodata-financial-search` — 金融数据自然语言搜索（债券、利率、评级）
+- `yourself-skill` — 船长数字分身引擎，自动加载 persona 并注入对话（思维方式/表达风格/决策框架）
 
 ### 🟡 场景触发（辅助）
-- 需要宏观数据判断固收走向 → `macro-monitor`
 - 需要多引擎交叉验证搜索 → `multi-search-engine`
 - 评估新分析框架/风险模型 → `content-evaluator`
 - 抓取网页金融数据/产品信息 → `web-scraper` 或 `playwright-scraper-skill`

@@ -36,6 +36,7 @@
 
 ### 🔴 启动加载（核心）
 在对话启动时一次性调用 Skill 工具加载以下 skill：
+- `yourself-skill` — 船长数字分身引擎，自动加载 persona 并注入对话（思维方式/表达风格/决策框架）
 - `content-evaluator` — 11维度评价框架，评估AI教育方案和框架时使用
 - `khazix-writer` — 卡兹克风格公众号长文写作
 
