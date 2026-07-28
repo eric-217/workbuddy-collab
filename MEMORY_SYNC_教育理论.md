@@ -131,6 +131,7 @@
 | 训练数据 | `D:\workbuddy\训练数据\`（235个问答对） |
 | 仓库ISSUES | `D:\workbuddy\github\ISSUES_教育理论.md` |
 | 仓库LOG | `D:\workbuddy\github\LOG_教育理论.md` |
+| 书稿素材库 | `D:\workbuddy\github\BOOK_教育理论.md`（闪光点 →《看见孩子》） |
 | ima知识库 | 「李春华17827599491的知识库」（42篇，需在桌面客户端手动归入子文件夹） |
 | ima草稿笔记 | note_id=`7486777623333695`（教育理论 长文章草稿本） |
 
