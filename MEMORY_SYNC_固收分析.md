@@ -615,8 +615,8 @@ D:\workbuddy\固收产品分析\
 
 ### 训练数据输出
 
-- 目标模型：mistral-7b（金融分析方向）
-- 输出目录：`D:\workbuddy\大模型训练\mistral-7b\inbox\auto_collected\`
+- 目标模型：qwen-7b（金融分析方向，2026-08-01船长切换到此模型）
+- 输出目录：`D:\workbuddy\大模型训练\qwen-7b\inbox\auto_collected\`
 - 格式：JSONL，按 `GUIDE_FOR_OTHER_CONVERSATIONS.md`（格式A纠偏对 / 格式B框架注入）
 - 命名：`YYYY-MM-DD_简要主题.jsonl`
 
