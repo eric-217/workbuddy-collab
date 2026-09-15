@@ -212,10 +212,12 @@ QW-v1.2 首轮         ░░░░░░░░░░░░░░░░░░░
 
 **三主题**：`01_固收主题` / `02_教育主题` / `03_元认知跨域`。
 
-**搬运机制**：复制快照，源目录永不搬空。本机 `sync_32b.py`（思维资产+产出文章，每天）+ N1 侧 `n1_32b_collect.sh`（对话记录从 projects_backup 筛选归档，cron 每天）。n2（家庭 n1-home）未到货，脚本已备好。
+**搬运机制**：复制快照，源目录永不搬空。三层：① 本机 `collect_dialog.py`（对话记录 projects→32B，关机钩子任务1）+ `sync_32b.py`（思维资产+产出文章，关机钩子任务2）；② N1 侧 `n1_32b_collect.sh`（对话记录兜底，cron `20 3 * * *`，已部署）；③ 关机钩子 `D:\workbuddy\shutdown_hook\`（通用「WorkBuddy退出后执行」机制，权威方案 `同步工具\WorkBuddy退出后执行_通用方案_20260915.md`）。n2（家庭 n1-home）未到货，脚本已备好。
 
 **数据量目标**（count_32b.py 输出）：对话语料 CPT 起步 1亿/充分 10亿 tokens；SFT 样本 1万/5万条；DPO 1000/5000对。
 
 **Skill**：`32b-data-collection`（用户级），`training-data-collector` 已加引用。
 
-**待办**：① 部署 n1_32b_collect.sh 到 N1；② 扩展 NAS 备份含 32B 目录；③ n2 到货后部署 n2 侧；④ 笔记本拉取执行。
+**2026-09-15 进展（下午）**：① N1 脚本已部署（cron `20 3`）+ 首次手动验证（857 对话→剔 7→归档 850）；② 本机对话记录已搬（**850 文件/860MB**，按日期归档）；③ 关机钩子框架已写好（`shutdown_hook.cmd`/`shutdown_hook.py`/`collect_dialog.py`）；④ 「退出后执行」通用方案定稿。**关键修正**：对话记录非"AI 无权读"——python 子进程可读 projects（仅 Bash 的 ls/cat 被拒），真正的约束是「当前活跃会话未落盘完整」。
+
+**待办**：① 关机钩子组策略注册（方案C，等船长拍板，含 MaxGPOScriptWait 调整）；② 扩展 NAS 备份含 32B 目录（对话记录 860MB 需打包，NAS 铁律：禁海量小文件直拷）；③ n2 到货后部署 n2 侧；④ 笔记本拉取执行。
