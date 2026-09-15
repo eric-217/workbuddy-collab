@@ -224,4 +224,6 @@ QW-v1.2 首轮         ░░░░░░░░░░░░░░░░░░░
 
 **边界与汇总（定版）**：台式机↔N1（办公室 NAS）、笔记本↔N2（家里 NAS，未到货），N1↔N2 靠 Tailscale 双向同步；对话记录按会话 UUID 并集合并（不重复不丢失），去重/清洗在训练前 prepare 阶段做。
 
-**待办**：① 笔记本同款注册关机钩子（`register_shutdown_hook.ps1`）+ 建 `WB_N1_Push_Login`；② 扩展 NAS 备份含 32B 目录（对话记录 860MB 需打包，NAS 铁律：禁海量小文件直拷）；③ n2 到货后部署 n2 侧；④ 笔记本拉取执行。
+**2026-09-15 进展（下午·第二批）**：① **NAS 备份已纳入 32B**：`n1_nas_backup.sh` 加「32B 母数据每日打包备份」（每日 3:30，留 4 份），手动验证产出 `32b_20260915.tar.gz`（**188M**，879MB jsonl 压缩后仅 188MB）；② **数据差距评估完成**：`count_32b.py` 重写 v2（解析 jsonl 有效文本 + 修正对话记录路径 bug），实测 **CPT 4520万 tokens（起步线 45.2%）/ SFT 596 条 / DPO 0 对**，报告见 `32B母数据\00_规范与索引\数据量差距评估_20260915.md`；③ **日期口径已确认一致**：本机 collect_dialog.py 与 N1 n1_32b_collect.sh 均用 mtime 打标签、同时区，850 文件对齐；④ 笔记本指令升级 v2（追加关机钩子注册 + 汇总边界 + N2 待办）；⑤ **PATH 缺陷根除**：WorkBuddy Bash 未注入 PortableGit usr/bin（dirname/ls/grep/git 全找不到），已把 PortableGit 三目录追加到用户级 PATH（下次启动 WorkBuddy 永久生效）。
+
+**待办（更新后）**：① 笔记本注册关机钩子（`register_shutdown_hook.ps1`，本地搬运不依赖 N2，已写进指令 v2 第 2 节）；② ~~NAS 备份纳入 32B~~ ✅ 已完成；③ n2 到货后部署 n2 侧 + 笔记本建 push 任务；④ 笔记本拉取执行（v2 指令）。
