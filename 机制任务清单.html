@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>协作机制 · 任务清单</title>
+<style>
+  :root{--ink:#1f2328;--sub:#57606a;--line:#d8dee4;--bg:#ffffff;--soft:#f6f8fa;--accent:#0b5fff;--warn:#b45309;--ok:#1a7f37;--hold:#6b7280}
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px 20px 64px;background:var(--soft);color:var(--ink);
+       font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+  .wrap{max-width:1080px;margin:0 auto;background:var(--bg);border:1px solid var(--line);
+        border-radius:14px;padding:32px 34px 40px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  h1{font-size:24px;margin:0 0 6px}
+  .meta{color:var(--sub);font-size:13px;margin-bottom:20px}
+  h2{font-size:17px;margin:34px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+  h3{font-size:15px;margin:22px 0 8px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0 6px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600;white-space:nowrap}
+  code{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:12.5px}
+  .tag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:10px;border:1px solid var(--line);white-space:nowrap}
+  .t-hold{color:var(--hold);border-color:#c9ced6;background:#f3f4f6}
+  .t-ok{color:var(--ok);border-color:#b7e0c1;background:#eefbf2}
+  .t-warn{color:var(--warn);border-color:#f0d5a8;background:#fff8ec}
+  .note{background:#fff8ec;border:1px solid #f0d5a8;border-radius:10px;padding:12px 16px;font-size:13.5px;margin:16px 0}
+  .lead{font-size:14px;color:var(--sub);background:var(--soft);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0}
+  ul{padding-left:20px}
+  footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);color:var(--sub);font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>协作机制 · 任务清单</h1>
+  <div class="meta">唯一排队口 · v1.0 · 2026-09-22 建立 @desk · 来源：<code>D:\workbuddy\github\机制任务清单.md</code></div>
+
+  <div class="lead">
+    <strong>状态口径</strong>：<span class="tag t-hold">待确认</span> → <span class="tag t-ok">可执行</span> → <span class="tag t-warn">进行中</span> → 已完成 / 已否决<br>
+    <strong>硬规则</strong>：AI 不得擅自执行「待确认」项；船长确认后，AI 只把状态翻成「可执行」，<strong>不顺手开工</strong>。
+  </div>
+
+  <h2>零 · 当前需要船长裁决的三项</h2>
+  <table>
+    <tr><th>编号</th><th>事项</th><th>我的建议</th><th>状态</th></tr>
+    <tr>
+      <td><strong>A1</strong></td>
+      <td>上轮已落地的 5 处机制改动（水位线 + CPG 1G + 1C 修正 + loader + MEMORY_SYNC 第 7 步）怎么处理？<br>(a) 原样保留 (b) 全部回退 (c) 部分保留</td>
+      <td><strong>(c)</strong>——留下 1C 那个 bug 修复（"超 50KB 只读末尾 15 条"是前后脱节的病根，无论分层怎么定都该修）；撤掉 Phase 1G 等 A2 定稿后一起上</td>
+      <td><span class="tag t-hold">待确认</span></td>
+    </tr>
+    <tr>
+      <td><strong>A2</strong></td>
+      <td>分层方案（动作层 / 状态层 / 内容层）细化定稿</td>
+      <td>职责分层如上；<strong>必须补一条防膨胀执行规则</strong>（否则状态层会像 MEMORY_SYNC_固收分析 一样长到 110KB）</td>
+      <td><span class="tag t-hold">待确认</span></td>
+    </tr>
+    <tr>
+      <td><strong>B1</strong></td>
+      <td>RAG 索引范围调整：把 <code>与deepseek对话全记录/</code> 移出索引</td>
+      <td><strong>建议做</strong>——它占 13,435/14,761 = 91% 的 chunk，是当年"检索不好用"的真实原因；移出后索引从 14,761 → 约 1,300 chunks</td>
+      <td><span class="tag t-hold">待确认</span></td>
+    </tr>
+  </table>
+
+  <h2>A 组 · 记忆与加载</h2>
+  <table>
+    <tr><th>编号</th><th>事项</th><th>为什么</th><th>动作</th><th>状态</th></tr>
+    <tr><td>A1</td><td>上轮 5 处改动三选一</td><td>见上</td><td>见上</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>A2</td><td>分层方案细化定稿</td><td>治"注入有上限、细节回捞不到"</td><td>写清三层的<strong>写入时机 + 硬上限 + 防膨胀规则</strong></td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>A3</td><td><code>MEMORY_SYNC_固收分析.md</code> 加「当前状态速览」（≤30 行）头部</td><td>它 110KB / 1328 行，被当"轨迹层"用了，每次都被要求全读</td><td>头部加速览节；历史规则按季度归档到 ima</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>A4</td><td><strong>CPG 拆分手术</strong></td><td><code>context-preservation-guard/SKILL.md</code> = <strong>96,627 字节</strong>，每次对话都加载，本身就在吃上下文额度</td><td>主文件留流程骨架（约 8–10KB），细则移到按需读取的 <code>references/</code></td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>A5</td><td><code>降低协作成本</code>(CFG) 瘦身</td><td>37,914 字节，同为每轮必读</td><td>同上分拆</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>A6</td><td>原文回捞指针挂进流程</td><td>精简摘要不替代原文——回捞路径不明就会"找不到当时怎么说的"</td><td>收束/接续时，LOG 条目带「日期 + 关键词 + 对话标识」，回捞用云端检索</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>A7</td><td>收束主题分流表新增「协作机制」类归属</td><td>本对话属新主题，按现表默认落 CPG 侧，但内容是 CFG 式收束——归属会漂</td><td>在 <code>MEMORY_SYNC.md</code> 分流表加一行</td><td><span class="tag t-hold">待确认</span></td></tr>
+  </table>
+
+  <h2>B 组 · 检索（RAG）</h2>
+  <table>
+    <tr><th>编号</th><th>事项</th><th>为什么</th><th>动作</th><th>状态</th></tr>
+    <tr><td>B1</td><td>索引范围调整（移出"对话全记录"）</td><td>91% chunk 是对话，检索被噪音淹没</td><td>改 <code>rag_config.json</code> 的 doc_paths / tag_rules</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>B2</td><td><code>build.py</code> 改<strong>增量索引</strong></td><td>现脚本是<strong>全量重建</strong>（收集全部→全部编码→整体覆盖 embeddings.npy），改一个文件也要重跑全库</td><td>加"已索引清单 + mtime/hash 对比"，只对新/改动文件编码、追加到库尾；删除的文件标记失效</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>B3</td><td>修 07-23 重建失败的三个坑</td><td>当时不是配置不够，是脚本问题</td><td>①调用路径错 ②日志 gbk 编码 ③tokenizer "Already borrowed"（并发）</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>B4</td><td>重建放计划任务（夜里 / 每周）</td><td>重建是电脑的活，不该占船长时间</td><td>参考 N1/N2 的 cron 模式</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>B5</td><td>启用与否 + 「索引不入同步」定铁律</td><td>索引是<strong>派生物</strong>（77MB/次），可由源文件重建</td><td>只同步脚本+配置；两机索引各建各的；要"换机即用"就 NAS 备一份</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>B6</td><td><code>README.md</code> 更新</td><td>写的模型是 all-MiniLM/384 维，实际是 bge-base-zh/768 维</td><td>与实际对齐</td><td><span class="tag t-hold">待确认</span></td></tr>
+  </table>
+
+  <h2>C 组 · 训练数据（32B / 7B）</h2>
+  <table>
+    <tr><th>编号</th><th>事项</th><th>状态</th></tr>
+    <tr><td>C1</td><td>本对话（记忆/接续/机制）元认知跨域收数据</td><td><span class="tag t-ok">✅ 已完成</span> 2026-09-22：8 维×2 + 格式 BC + DPO 跨域×6</td></tr>
+    <tr><td>C2</td><td><code>待讨论点清单.md</code> 维护：新增本轮"待讨论点"</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>C3</td><td>格式E 补采（10–15 条目标，现 6 条）</td><td><span class="tag t-warn">进行中</span>（待后续审稿时累积）</td></tr>
+  </table>
+
+  <h2>D 组 · 同步与基础设施</h2>
+  <div class="meta">细节权威源 = <code>D:\workbuddy\同步工具\部署清单.md</code></div>
+  <table>
+    <tr><th>编号</th><th>事项</th><th>备注</th><th>状态</th></tr>
+    <tr><td>D1</td><td><strong>n1_sync 对账单版</strong>（正向一致性核验 + 周期检查）</td><td>主线；<strong>dry-run 报告先行</strong></td><td><span class="tag t-hold">待确认</span>（等 A 组清了再开）</td></tr>
+    <tr><td>D2</td><td>N2 部署 S0→S5</td><td>由笔记本执行，触发 = N2 连上家里网；完成后填 <code>n2_endpoint.txt</code></td><td><span class="tag t-ok">可执行</span></td></tr>
+    <tr><td>D3</td><td>六层防线①②：空闲/周期推送任务</td><td>—</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>D4</td><td>NAS 手动全量后基线核验 + mirror 切换</td><td>—</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>D5</td><td>台式机 <code>.failed-0909</code> / <code>.corrupt-2026-09-07</code> 留档清理</td><td>—</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>D6</td><td>笔记本→台式机反向 SSH</td><td>待船长发话</td><td><span class="tag t-hold">待确认</span></td></tr>
+    <tr><td>D7</td><td>笔记本回电后自拉 v2.5</td><td>零操作，自动</td><td><span class="tag t-warn">等待外部条件</span></td></tr>
+  </table>
+
+  <div class="note">
+    <strong>本轮已执行（说明用，不需确认）</strong>
+    <ul>
+      <li>32B 母数据：<code>03_元认知跨域/思维资产/</code> 新增 8 维归档 ×2</li>
+      <li>7B 蒸馏层：<code>deepseek-7b/inbox/student_mode/2026-09-22_元认知_记忆与接续_格式BC.jsonl</code>（6 条，output 全为船长原话）+ 同名 <code>_AI解释层_不训练.jsonl</code>（3 条，禁止进训练）</li>
+      <li>DPO：<code>04_DPO偏好对/跨域/dpo_pairs.jsonl</code> 新建，6 对（固收侧原 9 → 合计 15）</li>
+      <li>persona v4.5 → <strong>v4.6</strong>：新增 #103/#104/#105 + Layer 4「跨机/跨日协作习惯」节；已备份（协作中枢 + D 盘）</li>
+      <li>协作中枢 git 推送 <code>571fd6c</code>；N1 接力推送成功（18.3s）</li>
+    </ul>
+  </div>
+
+  <footer>协作机制 · 任务清单 v1.0 · 2026-09-22 @desk · 权威文件：<code>D:\workbuddy\github\机制任务清单.md</code></footer>
+</div>
+</body>
+</html>
