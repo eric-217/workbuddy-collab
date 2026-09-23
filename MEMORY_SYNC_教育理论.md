@@ -133,7 +133,7 @@
 | 理论书稿 | `D:\workbuddy\家庭教育知识库\基础理论\原版书稿\` |
 | 用户画像 | `C:\Users\Administrator\.workbuddy\USER.md` |
 | 教育实践日志 | `D:\workbuddy\家庭教育知识库\教育实践日志\` |
-| RAG系统 | `D:\workbuddy\RAG系统\rag_server.py`（台式机 `100.115.45.85:5060`） |
+| RAG系统 | `D:\workbuddy\RAG系统\rag_server.py`（**台式机** `100.74.55.97:5060`，六库，2026-09-23 重建；**服务需手动启动，无自启**）<br>⚠️ 勿与**训练机 ERIC** `100.115.45.85:8001`（`D:\rag_service\`，ChromaDB，开机自启）混为一谈——两者是两套独立 RAG |
 | 训练数据 | `D:\workbuddy\训练数据\`（235个问答对） |
 | 仓库ISSUES | `D:\workbuddy\github\ISSUES_教育理论.md` |
 | 仓库LOG | `D:\workbuddy\github\LOG_教育理论.md` |
