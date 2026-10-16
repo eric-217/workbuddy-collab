@@ -1,0 +1,144 @@
+# -*- coding: utf-8 -*-
+"""B7 · RAG 统一检索入口（路由版 · HTTP 常驻服务）
+
+优先走常驻服务 http://127.0.0.1:5060（B7 方向=随手可查，服务不在时可手动
+  重启RAG服务.cmd 拉起，或用 rag_search_offline.py 冷启动直读索引）。
+
+用法：
+  AI 推荐（避开 Git Bash 中文传参坏码）：
+      echo "客户现金流覆盖性怎么测算" | python rag_search.py --stdin
+      echo "问题" | python rag_search.py --stdin --k 3 --libs 财富管理,境外资产配置
+  手动/cmd：
+      python rag_search.py "问题" --k 3
+
+路由规则（命中关键词最多的库优先，并列则都查；零命中=四库全查；--libs 跳过路由）：
+  固收产品分析 ← 固收/信贷/恒昌/宜信/助贷/逾期/穿透/资金成本…
+  境外资产配置 ← 港险/香港/周大福/匠心/永明/分红/CRS/海外/置业…
+  私募股权     ← 私募/股权/基金/LP/GP/IPO/退出/S基金…
+  财富管理     ← 财富/客户/资产配置/规划/现金流/教育金…
+
+约定（B7「何时查」，2026-09-24 船长定）：
+  主题对话的实质内容轮先查本脚本；纯操作轮（存档/同步/执行类）跳过；
+  命中 → 回答中引用出处；无强命中 → 记为 RAG 缺口，答完提示船长补素材。
+"""
+import argparse
+import json
+import sys
+import time
+import urllib.parse
+import urllib.request
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+BASE = "http://127.0.0.1:5060"
+# 已知坑（2026-09-23 探明）：本机代理会劫持对 127.0.0.1 的请求（HTTP 502），
+# 且 urllib 在 Windows 会读注册表系统代理 → 一律强制直连。
+OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+LIBS = ["固收产品分析", "境外资产配置", "私募股权", "财富管理"]
+
+# 路由表：按船长术语组词；按命中关键词计数取优
+ROUTES = [
+    ("固收产品分析", "固收 类固收 信贷 恒昌 宜信 助贷 小贷 消费金融 逾期 坏账 底层资产 穿透 "
+                  "资金成本 融资端 资产端 兑付 爆雷 刺收 剪枯枝 P2P 理财 收益率 利率"),
+    ("境外资产配置", "港险 香港 周大福 匠心 永明 保司 分红 保单 保费 储蓄险 CRS 境外 海外 "
+                  "置业 信托 税务 日本 泰国 马来西亚 837号 美元 汇率"),
+    ("私募股权", "私募 股权 基金 LP GP IPO 退出 S基金 老股 清算 估值 回报 门槛"),
+    ("财富管理", "财富 客户 资产配置 规划 现金流 教育金 保险配置 家庭 养老 遗产 传承"),
+]
+
+STRONG = 0.55  # 强命中相关度下限（低于此视作缺口）
+
+
+def route_libs(query):
+    """返回 (选中的库列表, 路由说明)。"""
+    scores = []
+    for lib, words in ROUTES:
+        hit = [w for w in words.split() if w in query]
+        if hit:
+            scores.append((len(hit), lib, hit))
+    if not scores:
+        return LIBS, "零命中 → 四库全查"
+    scores.sort(key=lambda s: s[0], reverse=True)
+    top = [s for s in scores if s[0] == scores[0][0]]
+    libs = [t[1] for t in top]
+    return libs, "命中[" + " ".join(scores[0][2][:5]) + "] → " + "+".join(libs)
+
+
+def search_one(lib, query, k, timeout=30):
+    body = json.dumps({"query": query, "n": k}).encode("utf-8")
+    url = BASE + "/" + urllib.parse.quote(lib) + "/search"
+    req = urllib.request.Request(url, data=body,
+                                 headers={"Content-Type": "application/json"})
+    with OPENER.open(req, timeout=timeout) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def search_rag(query, k=3, libs=None):
+    """程序化入口：返回 (合并排序结果, 实际查询的库列表)。"""
+    if libs is None:
+        libs, _ = route_libs(query)
+    merged = []
+    for lib in libs:
+        try:
+            d = search_one(lib, query, k)
+            for x in d.get("results", []):
+                x["kb"] = lib
+                merged.append(x)
+        except Exception as e:  # 单库故障不拖垮整体
+            merged.append({"kb": lib, "error": str(e), "relevance": 0})
+    merged.sort(key=lambda x: x.get("relevance", 0), reverse=True)
+    return merged[:k], libs
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("query", nargs="?", default=None, help="检索问题")
+    ap.add_argument("--stdin", action="store_true", help="从 stdin 读问题（AI 推荐）")
+    ap.add_argument("--k", type=int, default=3)
+    ap.add_argument("--libs", default=None, help="显式指定库，逗号分隔（跳过路由）")
+    ap.add_argument("--json", action="store_true", help="输出 JSON")
+    args = ap.parse_args()
+
+    query = args.query
+    if args.stdin:
+        raw = sys.stdin.buffer.read().decode("utf-8", errors="replace").strip()
+        if raw:
+            query = raw
+    if not query:
+        print("[X] 未提供问题（位置参数或 --stdin）")
+        return 1
+
+    libs = [s.strip() for s in args.libs.split(",")] if args.libs else None
+    t0 = time.perf_counter()
+    try:
+        results, used = search_rag(query, args.k, libs)
+    except Exception as e:
+        print(f"[X] 常驻服务不可达（{e}）。请双击 重启RAG服务.cmd，"
+              f"或改用 rag_search_offline.py（冷启动，慢）。")
+        return 2
+    rt = (time.perf_counter() - t0) * 1000
+    note = None if args.libs else route_libs(query)[1]
+
+    if args.json:
+        print(json.dumps({"query": query, "libs": used, "roundtrip_ms": round(rt),
+                          "results": results}, ensure_ascii=False, indent=2))
+        return 0
+
+    print(f"【RAG】问题：{query}")
+    if note:
+        print(f"      路由：{note} | 往返 {rt:.0f}ms")
+    if not any(r.get("relevance", 0) >= STRONG for r in results):
+        best = max((r.get("relevance", 0) for r in results), default=0)
+        print(f"      结果：无强命中（最高 {best:.2f}）→ 记为 RAG 缺口，答完提示船长补素材。")
+    for i, x in enumerate(results, 1):
+        if "error" in x:
+            print(f"  {i}. [故障] {x['kb']}: {x['error']}")
+            continue
+        src = str(x.get("source", "")).replace("\\", "/")
+        print(f"  {i}. [{x.get('relevance')}] {x['kb']} ◂ {src}")
+        print(f"     {x.get('text', '')[:400].strip()}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
