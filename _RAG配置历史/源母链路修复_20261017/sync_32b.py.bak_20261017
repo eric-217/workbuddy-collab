@@ -1,0 +1,261 @@
+# -*- coding: utf-8 -*-
+"""
+sync_32b.py — 32B 母数据搬运脚本（本机层）
+================================================
+职责：把源目录（思维资产 + 产出文章 + persona）复制归档到 32B 母数据目录。
+     复制快照，只增不删；源目录 = 权威活数据，永不搬空、永不移动。
+
+v2（2026-09-16 船长要求对"是否去重"做判断后升级）
+------------------------------------------------------------
+★ 新增「内容级全局去重」——**同一内容在母数据中只存一份**。
+
+  为什么要去重（船长的疑问）：
+    · 「源目录 + 母数据 = 两个复本」是**设计本意**，保留（工作区 vs 冻结归档）。
+    · 但「母数据内部同一内容出现两份」是**真重复**，会污染 32B 训练语料：
+      同一份文本被训练两次 → 该内容的权重被放大，且浪费算力。
+    · 真重复从哪来？
+        (a) **跨源目录重叠**：`D:\\workbuddy\\思想资产` 与
+            `D:\\workbuddy\\固收产品分析\\思想资产` 有 20 个文件内容完全相同；
+        (b) **SOURCE_MAP 颗粒度调整**：历史上曾用「子目录级」映射（把
+            分析报告\\第一部分… 拍平到 产出文章\\第一部分…），后改为「父目录级」，
+            若无去重，同一文件会以「平铺 + 嵌套」两条路径各存一份。
+    · 去重机制：复制前先算源文件 md5；若母数据中**已在别的路径**存在相同内容 →
+      跳过，记入「重复清单」。这样无论源目录怎么重叠、映射怎么调整，
+      母数据内部永远没有真重复。
+
+  ★ 重复清单：`00_规范与索引/重复清单.md`（每次运行重写，反映当前状态）
+
+用法：
+    python sync_32b.py            # 增量搬运（只复制新增/变更文件，含内容去重）
+    python sync_32b.py --dry-run  # 只统计，不实际复制
+
+对话记录（对话 jsonl）不在本脚本处理 —— 由 N1 侧 n1_32b_collect.sh 从
+projects_backup 筛选归档（因为 ~/.workbuddy/projects 是 WorkBuddy 内部目录，
+本机 AI 无权直接读）。
+
+维护：源目录清单 SOURCE_MAP 按主题/类别配置，新增源目录在此登记即可。
+"""
+import os
+import sys
+import shutil
+import hashlib
+import datetime
+
+# 32B 母数据根目录
+BASE = r"D:\workbuddy\32B母数据"
+
+# 建去重索引时跳过的顶层目录（规范/脚本区、缓存、对话归档）
+# 说明：_对话记录_原始归档 由 N1 侧脚本维护，且体积大，不纳入本脚本去重索引。
+SKIP_TOP = {"00_规范与索引", "__pycache__", "_对话记录_原始归档", "_temp"}
+
+# 源目录清单：主题 -> 类别 -> [(源目录, 目标子目录名)]
+# 说明：路径不存在会自动跳过（不报错），便于渐进式扩充。
+#      每个源目录复制到独立子目录，保留源结构，避免不同源目录同名文件互相覆盖。
+SOURCE_MAP = {
+    "01_固收主题": {
+        "思维资产": [
+            (r"D:\workbuddy\固收产品分析\底层思维", "底层思维"),      # 底层思维_总册.md
+            (r"D:\workbuddy\固收产品分析\讨论记录", "讨论记录"),      # 讨论记录
+            (r"D:\workbuddy\固收产品分析\思想资产", "固收思想资产"),  # 固收思想资产（超集，62）
+            (r"D:\workbuddy\固收产品分析\书稿", "书稿"),              # 书稿素材
+            # 根目录思想资产源已删除（2026-09-17 船长指令：与固收思想资产重叠20个，
+            # 教育类#12/#13/#14 由家庭教育知识库/思想资产源承接）→ 不再作为源
+        ],
+        "产出文章": [
+            (r"D:\workbuddy\固收产品分析\公众号文章", "公众号文章"),
+            (r"D:\workbuddy\固收产品分析\分析报告", "分析报告"),
+        ],
+    },
+    "02_教育主题": {
+        "思维资产": [
+            (r"D:\workbuddy\家庭教育知识库\思想资产", "思想资产"),
+            (r"D:\workbuddy\家庭教育知识库\基础理论", "基础理论"),
+            (r"D:\workbuddy\家庭教育知识库\最初的思考", "最初的思考"),
+        ],
+        "产出文章": [
+            (r"D:\workbuddy\家庭教育知识库\已完稿文章", "已完稿文章"),
+            (r"D:\workbuddy\家庭教育知识库\已定稿待发表", "已定稿待发表"),
+            (r"D:\workbuddy\家庭教育知识库\待发布", "待发布"),
+        ],
+    },
+    "03_元认知跨域": {
+        "思维资产": [
+            (r"C:\Users\Administrator\.workbuddy\skills\yourself-skill\selves\船长\knowledge", "persona特征"),
+        ],
+    },
+}
+
+DRY_RUN = "--dry-run" in sys.argv
+
+
+def md5(path, blk=1 << 20):
+    """计算文件 md5；失败返回 None。"""
+    h = hashlib.md5()
+    try:
+        with open(path, "rb") as f:
+            while True:
+                b = f.read(blk)
+                if not b:
+                    break
+                h.update(b)
+    except OSError:
+        return None
+    return h.hexdigest()
+
+
+def build_index():
+    """扫描母数据已有内容，返回 (md5 -> set(相对路径), 相对路径 -> md5)。"""
+    idx = {}
+    p2h = {}
+    for name in os.listdir(BASE):
+        if name in SKIP_TOP:
+            continue
+        top = os.path.join(BASE, name)
+        if not os.path.isdir(top):
+            continue
+        for root, dirs, files in os.walk(top):
+            dirs[:] = [d for d in dirs if d != "__pycache__"]
+            for f in files:
+                p = os.path.join(root, f)
+                rel = os.path.relpath(p, BASE)
+                h = md5(p)
+                if h:
+                    idx.setdefault(h, set()).add(rel)
+                    p2h[rel] = h
+    return idx, p2h
+
+
+def index_update(idx, p2h, rel, h):
+    """把某路径的内容登记进索引（先清掉该路径的旧映射）。"""
+    old = p2h.get(rel)
+    if old and old in idx:
+        idx[old].discard(rel)
+    idx.setdefault(h, set()).add(rel)
+    p2h[rel] = h
+
+
+def copy_tree_incremental(src, dst, idx, p2h, dup_log):
+    """增量 + 内容去重复制。返回 (复制数, 跳过重复数)。"""
+    if not os.path.isdir(src):
+        print(f"  [跳过] 源不存在: {src}")
+        return 0, 0
+    copied = dup = 0
+    for root, _dirs, files in os.walk(src):
+        rel = os.path.relpath(root, src)
+        target_dir = os.path.join(dst, rel)
+        os.makedirs(target_dir, exist_ok=True)
+        for f in files:
+            if f == "__pycache__":
+                continue
+            s = os.path.join(root, f)
+            d = os.path.join(target_dir, f)
+            rel_to_base = os.path.relpath(d, BASE)
+
+            need = False
+            if not os.path.exists(d):
+                need = True
+            else:
+                try:
+                    if (os.path.getmtime(s) > os.path.getmtime(d)
+                            or os.path.getsize(s) != os.path.getsize(d)):
+                        need = True
+                except OSError:
+                    need = True
+            if not need:
+                continue
+
+            h = md5(s)
+            if h is None:
+                continue
+
+            others = [p for p in idx.get(h, set()) if p != rel_to_base]
+            if others:
+                # 内容已存在于别处 → 跳过，记入重复清单
+                dup += 1
+                dup_log.append((rel_to_base, sorted(others)[0]))
+                index_update(idx, p2h, rel_to_base, h)
+                continue
+
+            if not DRY_RUN:
+                shutil.copy2(s, d)
+            copied += 1
+            index_update(idx, p2h, rel_to_base, h)
+    return copied, dup
+
+
+def write_dup_report(dup_log):
+    """重写重复清单（反映本次运行判定出的重复项 = 内容已有、跳过复制）。"""
+    path = os.path.join(BASE, "00_规范与索引", "重复清单.md")
+    ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    lines = [
+        "# 32B 母数据 · 重复清单（内容级）",
+        "",
+        "> 由 `sync_32b.py` 每次运行重写。语义：这些源文件的内容在母数据中**已存在于别的路径**，",
+        "> 因此本次**跳过复制**（母数据内部同一内容只保留一份）。",
+        "> 若此处出现「本应保留的位置」，说明该位置的内容已被先复制到的另一路径占用——",
+        "> 需要调整 `SOURCE_MAP` 顺序或清理旧路径。",
+        "",
+        f"生成时间：{ts}",
+        f"本次跳过重复：{len(dup_log)} 项",
+        "",
+    ]
+    if dup_log:
+        lines += ["| # | 跳过的目标路径（未复制） | 内容已存在于 |", "|---|---|---|"]
+        for i, (t, o) in enumerate(dup_log, 1):
+            lines.append(f"| {i} | {t} | {o} |")
+    else:
+        lines.append("（本次无重复）")
+    lines.append("")
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines))
+        print(f"重复清单已更新: {path}")
+    except OSError as e:
+        print(f"[警告] 写重复清单失败: {e}")
+
+
+def main():
+    print("=" * 60)
+    print("32B 母数据搬运（本机层 · 含内容级去重）")
+    print("模式:", "DRY-RUN（只统计不复制）" if DRY_RUN else "增量复制")
+    print("=" * 60)
+
+    idx, p2h = build_index()
+    print(f"母数据现有内容索引：{sum(len(v) for v in idx.values())} 个文件 / "
+          f"{len(idx)} 种不同内容")
+    print("-" * 60)
+
+    total = 0
+    dup_log = []
+    for theme, categories in SOURCE_MAP.items():
+        for category, src_dirs in categories.items():
+            base_dst = os.path.join(BASE, theme, category)
+            for src, subname in src_dirs:
+                dst = os.path.join(base_dst, subname)
+                n, dup = copy_tree_incremental(src, dst, idx, p2h, dup_log)
+                if n or dup:
+                    msg = f"[{theme}/{category}] {subname}: +{n} 复制"
+                    if dup:
+                        msg += f"，跳过重复 {dup}"
+                    print(msg)
+                    total += n
+
+    print("-" * 60)
+    print(f"本次{'待' if DRY_RUN else '已'}复制: {total} 文件；"
+          f"因内容重复跳过: {len(dup_log)} 项")
+
+    if not DRY_RUN:
+        write_dup_report(dup_log)
+        if total > 0:
+            log_path = os.path.join(BASE, "00_规范与索引", "搬运日志.md")
+            ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            with open(log_path, "a", encoding="utf-8") as f:
+                f.write(f"\n- {ts} 本机思维资产+产出文章增量搬运：+{total} 文件"
+                        f"（跳过重复 {len(dup_log)}）\n")
+            print(f"搬运日志已更新: {log_path}")
+
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
