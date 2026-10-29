@@ -143,7 +143,7 @@
 
 ## 关键参考
 
-- **教育理论密语**：`D:\workbuddy\家庭教育知识库\__新对话密语__.md`
+- **教育理论域卡**：`D:\workbuddy\规则治理\20_域\域_教育基础理论\教育基础理论域卡.md`（原"教育理论密语"2026-10-28 已删，内容核查后并入协作规则与本卡）
 - **用户画像**：`C:\Users\Administrator\.workbuddy\USER.md`
 - **教育理论通用规则**：`D:\workbuddy\github\MEMORY_SYNC_教育理论.md`
 - **教育理论ISSUES**：`D:\workbuddy\github\ISSUES_教育理论.md`
